@@ -2,27 +2,25 @@
 
 int main() {
 
-    int n, menor, posicao, *x;
+    int n, menor, posicao, x[1000];
+    int *p;
 
     scanf("%d", &n);
 
     if(n > 1 && n < 1000) {
-        x = (int*) malloc(n * sizeof(int));
-        if(x == NULL) return 1;
-        for(int i = 0; i < n; i++) {
-            scanf("%d", x + i);
+        for(p = x; p < x + n; p++) {
+            scanf("%d", p);
         }
-        menor = *(x);
+        menor = *x;
         posicao = 0;
-        for(int i = 1; i < n; i++) {
-            if(*(x + i) < menor) {
-                menor = *(x + i);
-                posicao = i;
+        for(p = x + 1; p < x + n; p++) {
+            if(*p < menor) {
+                menor = *p;
+                posicao = p - x;
             }
         }
         printf("Menor valor: %d\n", menor);
         printf("Posicao: %d\n", posicao);
-        free(x);
     }
     return 0;
 }
