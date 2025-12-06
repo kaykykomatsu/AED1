@@ -1,60 +1,60 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#define MAX 1000
+#define MAX_EXPRESSAO 1001
+#define MAX_LINHAS 10000
 
-typedef struct lista {
-    char vet[MAX];
-    int topo;
-} Lista;
+typedef struct No{
+    char simbolo;
+    struct No *prox;
+} No;
 
-void push(char vet[MAX], char c, int *topo) {
-    if (*topo < MAX) {
-        vet[*topo] = c;
-        (*topo)++;
-    }
+void push(No **topo, char simbolo){
+    No* novo = (No*)malloc(sizeof(No));
+    novo -> simbolo = simbolo;
+    novo -> prox = *topo;
+    *topo = novo;
 }
 
-void pop(char vet[MAX], int *topo) {
-    if (*topo > 0) {
-        (*topo)--;
-        vet[*topo] = '\0';
-    }
-}
-
-const char* verifica_parenteses(char expressao[MAX]) {
-    Lista pilha;
-    pilha.topo = 0;
-
-    for (int i = 0; expressao[i] != '\0' && expressao[i] != '\n'; i++) {
-        if (expressao[i] == '(') {
-            push(pilha.vet, '(', &pilha.topo);
-        } else if (expressao[i] == ')') {
-            if (pilha.topo == 0) {
-                return "incorrect";
-            }
-            pop(pilha.vet, &pilha.topo);
-        }
-    }
-
-    return (pilha.topo == 0) ? "correct" : "incorrect";
-}
-
-int main() {
-    int n;
-    char expressao[MAX];
-
-    if (scanf("%d", &n) != 1 || n < 1 || n > 10000) {
+int pop(No **topo){
+    if(*topo != NULL) return 0;
+        
+        No* temp = *topo;
+        *topo = (*topo) -> prox;
+        free(temp);
         return 1;
-    }
+}
 
-    while (getchar() != '\n'); // limpa o buffer
+int esta_vazia(No *topo){
+    return topo == NULL;
+}
 
-    for (int i = 0; i < n; i++) {
-        if (fgets(expressao, MAX, stdin)) {
-            const char* resultado = verifica_parenteses(expressao);
-            printf("%s\n", resultado);
+const char *verifica_expressao(char expressao[]){
+    No* pilha = NULL;
+
+    for(int i = 0 ; expressao[i] != '\0' ; i++){
+        if(expressao[i] == '('){
+            push(&pilha, '(');
+        }else if (expressao[i] == ')'){
+            if(!pop(&pilha)){
+                return 0;
+            }
         }
     }
+    return esta_vazia(pilha);
+}
 
+int main(){
+    char expressao[MAX_EXPRESSAO];
+
+    while(fgets(expressao , MAX_EXPRESSAO , stdin)) {
+        expressao[strcspn(expressao , "\n")] = '\0';
+        if(verifica_expressao(expressao)) {
+            printf("correct\n");
+        }else {
+            printf("incorrect\n");
+        }
+    }
     return 0;
 }
